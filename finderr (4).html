@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FINDerr</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0e1a26;
+    --ink-deep:#0a141d;
+    --parchment:#efe6cd;
+    --parchment-dim:#e3d7b6;
+    --verdigris:#3c8271;
+    --verdigris-dim:#2c6155;
+    --gold:#c9a24b;
+    --gold-bright:#e0bd6c;
+    --rust:#b5482a;
+    --rust-bright:#cf5b39;
+    --text-hi:#f3ecd8;
+    --text-mid:#b9c2ca;
+    --text-low:#7c8894;
+    --line:rgba(201,162,75,0.22);
+    --radius:3px;
+    --shadow:0 10px 30px rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at 15% -10%, rgba(60,130,113,0.16), transparent 45%),
+      radial-gradient(ellipse at 85% 0%, rgba(201,162,75,0.10), transparent 40%),
+      var(--ink);
+    color:var(--text-hi);
+    font-family:'Public Sans', sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold); color:var(--ink-deep);}
+  a{color:inherit;}
+
+  /* subtle chart-line texture overlay */
+  .chart-bg{
+    position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.05;
+    background-image:
+      repeating-linear-gradient(0deg, var(--gold) 0px, transparent 1px, transparent 84px, var(--gold) 85px),
+      repeating-linear-gradient(90deg, var(--gold) 0px, transparent 1px, transparent 84px, var(--gold) 85px);
+  }
+
+  .wrap{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    border-bottom:1px solid var(--line);
+    padding:20px 0;
+    position:sticky; top:0; z-index:50;
+    background:rgba(14,26,38,0.86);
+    backdrop-filter:blur(10px);
+  }
+  .header-row{display:flex; align-items:center; justify-content:space-between; gap:24px;}
+  .brand{display:flex; align-items:center; gap:14px; text-decoration:none; cursor:pointer;}
+  .brand svg{width:46px; height:46px; flex-shrink:0;}
+  .brand-text{display:flex; flex-direction:column; line-height:1;}
+  .brand-name{font-family:'Fraunces', serif; font-weight:600; font-size:22px; letter-spacing:0.01em; color:var(--text-hi);}
+  .brand-tag{font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-top:3px;}
+  nav{display:flex; align-items:center; gap:28px;}
+  nav a{font-size:14px; font-weight:500; color:var(--text-mid); text-decoration:none; transition:color .15s;}
+  nav a:hover{color:var(--gold-bright);}
+  .btn-primary{
+    background:var(--rust); color:var(--text-hi); border:none; padding:11px 20px;
+    font-family:'Public Sans',sans-serif; font-weight:600; font-size:13.5px;
+    border-radius:var(--radius); cursor:pointer; letter-spacing:0.01em;
+    transition:background .15s, transform .15s;
+    box-shadow:0 4px 14px rgba(181,72,42,0.3);
+  }
+  .btn-primary:hover{background:var(--rust-bright); transform:translateY(-1px);}
+  .btn-ghost{
+    background:transparent; border:1px solid var(--line); color:var(--text-hi);
+    padding:10px 18px; font-family:'Public Sans',sans-serif; font-weight:500; font-size:13.5px;
+    border-radius:var(--radius); cursor:pointer; transition:border-color .15s, color .15s;
+  }
+  .btn-ghost:hover{border-color:var(--gold); color:var(--gold-bright);}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:76px 0 56px; text-align:center; position:relative;}
+  .hero-eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--verdigris-dim); background:rgba(60,130,113,0.12); border:1px solid rgba(60,130,113,0.35);
+    display:inline-block; padding:6px 14px; border-radius:20px; margin-bottom:26px;
+  }
+  .hero h1{
+    font-family:'Fraunces', serif; font-weight:600; font-style:italic;
+    font-size:clamp(38px, 5.4vw, 68px); line-height:1.04; margin:0 0 20px;
+    color:var(--text-hi); letter-spacing:-0.01em;
+  }
+  .hero h1 em{color:var(--gold-bright); font-style:italic;}
+  .hero p{
+    font-size:16.5px; color:var(--text-mid); max-width:520px; margin:0 auto 34px; line-height:1.6;
+  }
+  .hero-actions{display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
+  .btn-large{padding:14px 26px; font-size:14.5px;}
+
+  /* ---------- STATS STRIP ---------- */
+  .stats{
+    display:flex; justify-content:center; gap:0; margin:52px auto 0; max-width:640px;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .stat{flex:1; text-align:center; padding:20px 10px; border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
+  .stat-num{font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--gold-bright);}
+  .stat-label{font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-low); margin-top:4px;}
+
+  /* ---------- SEARCH / FILTER ---------- */
+  .console{margin:64px 0 28px;}
+  .console-top{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:16px;}
+  .search-box{
+    flex:1; min-width:240px; position:relative;
+  }
+  .search-box input{
+    width:100%; background:rgba(239,230,205,0.04); border:1px solid var(--line);
+    color:var(--text-hi); padding:13px 16px 13px 42px; border-radius:var(--radius);
+    font-family:'Public Sans',sans-serif; font-size:14px; outline:none;
+    transition:border-color .15s, background .15s;
+  }
+  .search-box input:focus{border-color:var(--gold); background:rgba(239,230,205,0.06);}
+  .search-box input::placeholder{color:var(--text-low);}
+  .search-box svg{position:absolute; left:14px; top:50%; transform:translateY(-50%); width:16px; height:16px; opacity:0.5;}
+  .sort-select{
+    background:rgba(239,230,205,0.04); border:1px solid var(--line); color:var(--text-hi);
+    padding:13px 16px; border-radius:var(--radius); font-family:'Public Sans',sans-serif; font-size:13.5px;
+    cursor:pointer; outline:none;
+  }
+  .chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:0.04em;
+    padding:7px 13px; border-radius:20px; border:1px solid var(--line); color:var(--text-mid);
+    cursor:pointer; background:transparent; transition:all .15s; user-select:none;
+  }
+  .chip:hover{border-color:var(--gold); color:var(--text-hi);}
+  .chip.active{background:var(--verdigris); border-color:var(--verdigris); color:var(--text-hi);}
+
+  /* ---------- GRID ---------- */
+  .section-label{
+    display:flex; align-items:center; gap:14px; margin:8px 0 22px;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-low);
+  }
+  .section-label::after{content:''; flex:1; height:1px; background:var(--line);}
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:18px;
+    padding-bottom:80px; min-height:120px;
+  }
+  .card{
+    background:linear-gradient(180deg, rgba(239,230,205,0.05), rgba(239,230,205,0.02));
+    border:1px solid var(--line); border-radius:6px; padding:20px;
+    display:flex; flex-direction:column; gap:12px; position:relative;
+    transition:transform .18s, border-color .18s, box-shadow .18s;
+    opacity:0; animation:riseIn .5s ease forwards;
+  }
+  .card:hover{transform:translateY(-3px); border-color:rgba(201,162,75,0.5); box-shadow:var(--shadow);}
+  @keyframes riseIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .course-stamp{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:600; letter-spacing:0.06em;
+    color:var(--ink); background:var(--gold); padding:4px 9px; border-radius:3px; white-space:nowrap;
+  }
+  .type-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.05em; text-transform:uppercase;
+    color:var(--verdigris-dim); border:1px solid rgba(60,130,113,0.4); padding:3px 8px; border-radius:12px; white-space:nowrap;
+  }
+  .card h3{
+    font-family:'Fraunces', serif; font-weight:500; font-size:19px; margin:0; line-height:1.28; color:var(--text-hi);
+  }
+  .card p.desc{font-size:13.5px; color:var(--text-mid); line-height:1.55; margin:0; flex:1;}
+  .tag-row{display:flex; flex-wrap:wrap; gap:6px;}
+  .tag{font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--text-low); background:rgba(255,255,255,0.03); border:1px solid var(--line); padding:2px 8px; border-radius:10px;}
+  .card-foot{display:flex; align-items:center; justify-content:space-between; padding-top:12px; border-top:1px solid var(--line); margin-top:2px;}
+  .uploader{font-size:12px; color:var(--text-low);}
+  .uploader b{color:var(--text-mid); font-weight:600;}
+  .card-actions{display:flex; align-items:center; gap:10px;}
+  .vote-btn{
+    display:flex; align-items:center; gap:6px; background:transparent; border:1px solid var(--line);
+    color:var(--text-mid); padding:6px 10px; border-radius:16px; font-family:'IBM Plex Mono',monospace;
+    font-size:12px; cursor:pointer; transition:all .15s;
+  }
+  .vote-btn:hover{border-color:var(--gold); color:var(--gold-bright);}
+  .vote-btn.voted{background:rgba(201,162,75,0.15); border-color:var(--gold); color:var(--gold-bright);}
+  .open-link{
+    color:var(--verdigris-dim); font-size:12px; font-weight:600; text-decoration:none;
+    display:flex; align-items:center; gap:4px;
+  }
+  .open-link:hover{color:var(--verdigris);}
+
+  .empty-state{
+    grid-column:1/-1; text-align:center; padding:70px 20px; border:1px dashed var(--line); border-radius:8px;
+  }
+  .empty-state svg{width:44px; height:44px; opacity:0.35; margin-bottom:16px;}
+  .empty-state h4{font-family:'Fraunces', serif; font-size:20px; font-weight:500; margin:0 0 8px; color:var(--text-hi);}
+  .empty-state p{color:var(--text-low); font-size:13.5px; max-width:340px; margin:0 auto;}
+
+  /* ---------- MODAL ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(6,11,16,0.72); backdrop-filter:blur(3px);
+    display:none; align-items:flex-start; justify-content:center; z-index:100; padding:60px 20px; overflow-y:auto;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--ink-deep); border:1px solid var(--line); border-radius:8px;
+    max-width:520px; width:100%; padding:32px; box-shadow:0 30px 80px rgba(0,0,0,0.5);
+    animation:modalIn .25s ease;
+  }
+  @keyframes modalIn{from{opacity:0; transform:translateY(14px) scale(0.98);} to{opacity:1; transform:translateY(0) scale(1);}}
+  .modal-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .modal h2{font-family:'Fraunces', serif; font-weight:600; font-size:24px; margin:0; color:var(--text-hi);}
+  .modal-sub{font-size:13px; color:var(--text-low); margin:0 0 26px;}
+  .close-x{background:none; border:none; color:var(--text-low); font-size:22px; cursor:pointer; line-height:1; padding:4px;}
+  .close-x:hover{color:var(--text-hi);}
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:7px;
+  }
+  .field input, .field select, .field textarea{
+    width:100%; background:rgba(239,230,205,0.04); border:1px solid var(--line); color:var(--text-hi);
+    padding:11px 13px; border-radius:var(--radius); font-family:'Public Sans',sans-serif; font-size:13.5px;
+    outline:none; transition:border-color .15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--gold);}
+  .field textarea{resize:vertical; min-height:70px; font-family:'Public Sans',sans-serif;}
+  .field-row{display:flex; gap:12px;}
+  .field-row .field{flex:1;}
+  .field-hint{font-size:11.5px; color:var(--text-low); margin-top:6px; line-height:1.4;}
+  .modal-actions{display:flex; gap:10px; margin-top:24px;}
+  .modal-actions .btn-primary, .modal-actions .btn-ghost{flex:1;}
+
+  /* toast */
+  .toast{
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--verdigris); color:var(--text-hi); padding:13px 22px; border-radius:6px;
+    font-size:13.5px; font-weight:500; box-shadow:var(--shadow); z-index:200;
+    opacity:0; pointer-events:none; transition:all .3s ease;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  footer{border-top:1px solid var(--line); padding:30px 0 46px; text-align:center;}
+  footer p{font-size:12px; color:var(--text-low); font-family:'IBM Plex Mono', monospace; letter-spacing:0.03em;}
+
+  @media (max-width:640px){
+    nav{display:none;}
+    .header-row{justify-content:space-between;}
+    .stats{max-width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="chart-bg"></div>
+
+<header>
+  <div class="wrap header-row">
+    <div class="brand" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <svg viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="48" fill="var(--ink-deep)" stroke="var(--gold)" stroke-width="1.4"/>
+        <circle cx="50" cy="50" r="42" fill="none" stroke="var(--gold)" stroke-width="0.6" opacity="0.5"/>
+        <!-- magnifying glass -->
+        <circle cx="43" cy="46" r="17" fill="rgba(60,130,113,0.14)" stroke="var(--gold-bright)" stroke-width="2.6"/>
+        <line x1="55" y1="58" x2="70" y2="73" stroke="var(--gold-bright)" stroke-width="4.2" stroke-linecap="round"/>
+        <!-- parrot perched on top of the glass rim -->
+        <g transform="translate(43,29)">
+          <!-- tail -->
+          <path d="M -3 6 C -13 6 -17 12 -20 19 C -14 17 -9 16 -4 14 Z" fill="var(--rust-bright)"/>
+          <!-- body -->
+          <ellipse cx="2" cy="4" rx="7.5" ry="9" fill="var(--verdigris)"/>
+          <!-- wing -->
+          <path d="M -1 1 C -6 3 -7 9 -3 13 C 0 9 2 6 3 2 Z" fill="var(--verdigris-dim)"/>
+          <!-- head -->
+          <circle cx="6" cy="-5" r="5.4" fill="var(--verdigris)"/>
+          <!-- beak -->
+          <path d="M 10.5 -4.5 C 14 -4 14.5 -1.5 12 0 C 10.5 -1 9.5 -2.5 10.5 -4.5 Z" fill="var(--gold)"/>
+          <!-- eye -->
+          <circle cx="7.6" cy="-6.4" r="1" fill="var(--ink-deep)"/>
+          <!-- feet gripping the lens rim -->
+          <path d="M 1 12 L -1 17 M 4 12.5 L 4 17.5" stroke="var(--gold)" stroke-width="1.3" stroke-linecap="round"/>
+        </g>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-name">FINDerr</span>
+        <span class="brand-tag">Chart the archives</span>
+      </div>
+    </div>
+    <nav>
+      <a href="#browse">Browse</a>
+      <a href="#" onclick="document.getElementById('aboutModal').classList.add('open');return false;">About</a>
+    </nav>
+    <button class="btn-primary" onclick="openUpload()">+ Log Material</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <span class="hero-eyebrow">A CLASS-RUN ARCHIVE, NOT A CLASSROOM</span>
+    <h1>Every past question<br>is buried <em>somewhere.</em><br>Go find it.</h1>
+    <p>FINDerr is where the class actually keeps its charts — lecture notes, past questions, and the summaries someone stayed up until 3am to make. Upload what you have. Take what you need.</p>
+    <div class="hero-actions">
+      <button class="btn-primary btn-large" onclick="document.getElementById('browse').scrollIntoView({behavior:'smooth'})">Browse the Archive</button>
+      <button class="btn-ghost btn-large" onclick="openUpload()">Log New Material</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Entries Logged</div></div>
+      <div class="stat"><div class="stat-num" id="statCourses">—</div><div class="stat-label">Courses Covered</div></div>
+      <div class="stat"><div class="stat-num" id="statVotes">—</div><div class="stat-label">Total Hoists</div></div>
+    </div>
+  </section>
+
+  <section class="console" id="browse">
+    <div class="section-label">The Archive</div>
+    <div class="console-top">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by title, course code, or tag…" oninput="renderGrid()">
+      </div>
+      <select class="sort-select" id="sortSelect" onchange="renderGrid()">
+        <option value="new">Newest first</option>
+        <option value="top">Most hoisted</option>
+        <option value="course">By course code</option>
+      </select>
+    </div>
+    <div class="chips" id="typeChips"></div>
+  </section>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<footer>
+  <p>FINDerr 🔎🦜 — logged by the class, for the class. Materials are shared by students; verify accuracy yourself.</p>
+</footer>
+
+<!-- Upload Modal -->
+<div class="overlay" id="uploadOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Log new material</h2>
+      <button class="close-x" onclick="closeUpload()">×</button>
+    </div>
+    <p class="modal-sub">Add an entry to the class archive. Everyone with the link will see it.</p>
+    <form id="uploadForm" onsubmit="handleSubmit(event)">
+      <div class="field">
+        <label>Title</label>
+        <input type="text" id="fTitle" placeholder="e.g. Midterm Past Questions — 2024/2025" required>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Course code</label>
+          <input type="text" id="fCourse" placeholder="e.g. CSC 301" required>
+        </div>
+        <div class="field">
+          <label>Type</label>
+          <select id="fType">
+            <option>Lecture Notes</option>
+            <option>Past Questions</option>
+            <option>Tutorial / Assignment</option>
+            <option>Textbook / Reading</option>
+            <option>Summary / Cheat Sheet</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <textarea id="fDesc" placeholder="What's in it, which semester, anything to know before opening it…"></textarea>
+      </div>
+      <div class="field">
+        <label>Link to the file</label>
+        <input type="url" id="fLink" placeholder="Google Drive, Dropbox, etc." required>
+        <div class="field-hint">FINDerr doesn't host files directly yet — drop a shareable link (make sure it's set to "anyone with the link").</div>
+      </div>
+      <div class="field">
+        <label>Tags <span style="color:var(--text-low); text-transform:none; font-weight:400;">(comma-separated)</span></label>
+        <input type="text" id="fTags" placeholder="e.g. semester1, prof-adeyemi, exam-heavy">
+      </div>
+      <div class="field">
+        <label>Your name</label>
+        <input type="text" id="fName" placeholder="How should we credit you?" required>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" onclick="closeUpload()">Cancel</button>
+        <button type="submit" class="btn-primary">Log it</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- About Modal -->
+<div class="overlay" id="aboutModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>About FINDerr</h2>
+      <button class="close-x" onclick="document.getElementById('aboutModal').classList.remove('open')">×</button>
+    </div>
+    <p class="modal-sub">The short version.</p>
+    <p style="color:var(--text-mid); font-size:14px; line-height:1.7;">
+      FINDerr is a shared board for the class to log and find study materials — notes, past questions, tutorial sheets, whatever's useful. Entries here are visible to everyone who opens this page, so treat it like a shared logbook: log what you've got, hoist what helps you, and keep it accurate for the next person.
+    </p>
+    <p style="color:var(--text-low); font-size:12.5px; line-height:1.6; margin-top:14px;">
+      Files themselves live wherever you already store them (Drive, Dropbox, etc.) — FINDerr just keeps the map to find them.
+    </p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Setup Gate (shown until Supabase keys are added) -->
+<div class="overlay" id="setupGate">
+  <div class="modal" style="max-width:620px;">
+    <div class="modal-head">
+      <h2>One-time setup</h2>
+    </div>
+    <p class="modal-sub">This copy of FINDerr needs a database to save entries for real, from any browser, forever. It takes about 5 minutes and it's free.</p>
+    <div style="font-size:13.5px; color:var(--text-mid); line-height:1.75;">
+      <p><b style="color:var(--gold-bright);">1.</b> Go to <a href="https://supabase.com" target="_blank" style="color:var(--verdigris-dim); text-decoration:underline;">supabase.com</a> → sign up (free) → <b>New project</b>.</p>
+      <p><b style="color:var(--gold-bright);">2.</b> Once it's created, open the <b>SQL Editor</b> (left sidebar) and run this:</p>
+      <pre style="background:rgba(0,0,0,0.35); border:1px solid var(--line); border-radius:6px; padding:14px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; overflow-x:auto; color:var(--gold-bright); white-space:pre;">create table materials (
+  id text primary key,
+  title text, course text, type text,
+  description text, link text, tags text,
+  uploader text, votes integer default 0,
+  created_at bigint
+);
+alter table materials enable row level security;
+create policy "public read" on materials
+  for select using (true);
+create policy "public insert" on materials
+  for insert with check (true);
+create policy "public update" on materials
+  for update using (true);</pre>
+      <p><b style="color:var(--gold-bright);">3.</b> Go to <b>Project Settings → API</b>. Copy the <b>Project URL</b> and the <b>anon public</b> key.</p>
+      <p><b style="color:var(--gold-bright);">4.</b> Open this HTML file in a text editor, find <code style="color:var(--gold-bright);">SUPABASE_URL</code> and <code style="color:var(--gold-bright);">SUPABASE_ANON_KEY</code> near the top of the <code>&lt;script&gt;</code> tag, paste your two values in, save, and reload this page.</p>
+      <p><b style="color:var(--gold-bright);">5.</b> To share it with the class, host the file for free on <a href="https://app.netlify.com/drop" target="_blank" style="color:var(--verdigris-dim); text-decoration:underline;">Netlify Drop</a> (just drag the file in) or GitHub Pages, and send the link.</p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-primary" onclick="location.reload()">I've added my keys — reload</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONNECT YOUR DATABASE HERE — see the setup screen for steps.
+============================================================ */
+const SUPABASE_URL = "https://pfdnbebgqdsyhdbmgqyh.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_jUKOfz3J2e-2sw5chg73ig_bVcXqqpO";
+const SETUP_DONE = SUPABASE_URL !== "YOUR_SUPABASE_URL" && SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY";
+
+const TYPES = ["Lecture Notes","Past Questions","Tutorial / Assignment","Textbook / Reading","Summary / Cheat Sheet","Other"];
+let activeType = "All";
+let materials = [];
+let votedIds = new Set();
+
+function esc(s){
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+function openUpload(){ document.getElementById('uploadOverlay').classList.add('open'); }
+function closeUpload(){ document.getElementById('uploadOverlay').classList.remove('open'); document.getElementById('uploadForm').reset(); }
+document.getElementById('uploadOverlay').addEventListener('click', e=>{ if(e.target.id==='uploadOverlay') closeUpload(); });
+document.getElementById('aboutModal').addEventListener('click', e=>{ if(e.target.id==='aboutModal') e.target.classList.remove('open'); });
+
+function buildChips(){
+  const wrap = document.getElementById('typeChips');
+  const all = ["All", ...TYPES];
+  wrap.innerHTML = all.map(t => `<button class="chip ${t===activeType?'active':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('');
+  wrap.querySelectorAll('.chip').forEach(c => c.addEventListener('click', ()=>{ activeType = c.dataset.t; buildChips(); renderGrid(); }));
+}
+
+async function sb(path, options={}){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+  if(!res.ok){
+    const txt = await res.text().catch(()=> '');
+    throw new Error('Supabase error ' + res.status + ': ' + txt);
+  }
+  const ct = res.headers.get('content-type') || '';
+  return ct.includes('application/json') ? res.json() : null;
+}
+
+async function loadMaterials(){
+  try{
+    const rows = await sb('materials?select=*&order=created_at.desc');
+    materials = (rows || []).map(r => ({
+      id: r.id, title: r.title, course: r.course, type: r.type,
+      desc: r.description || '', link: r.link,
+      tags: (r.tags || '').split(',').map(t=>t.trim()).filter(Boolean),
+      uploader: r.uploader, votes: r.votes || 0, createdAt: r.created_at
+    }));
+  }catch(e){
+    console.error('load error', e);
+    materials = [];
+    showToast("Couldn't reach the database — check your Supabase setup");
+  }
+  renderGrid();
+}
+
+async function handleSubmit(e){
+  e.preventDefault();
+  const entry = {
+    id: 'm_' + Date.now() + '_' + Math.random().toString(36).slice(2,8),
+    title: document.getElementById('fTitle').value.trim(),
+    course: document.getElementById('fCourse').value.trim().toUpperCase(),
+    type: document.getElementById('fType').value,
+    desc: document.getElementById('fDesc').value.trim(),
+    link: document.getElementById('fLink').value.trim(),
+    tags: document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    uploader: document.getElementById('fName').value.trim(),
+    votes: 0,
+    createdAt: Date.now()
+  };
+  try{
+    await sb('materials', {
+      method: 'POST',
+      headers: {'Prefer': 'return=minimal'},
+      body: JSON.stringify({
+        id: entry.id, title: entry.title, course: entry.course, type: entry.type,
+        description: entry.desc, link: entry.link, tags: entry.tags.join(','),
+        uploader: entry.uploader, votes: 0, created_at: entry.createdAt
+      })
+    });
+    materials.unshift(entry);
+    closeUpload();
+    renderGrid();
+    showToast('Logged to the archive ⚓');
+  }catch(err){
+    console.error(err);
+    showToast("Couldn't save — check your Supabase setup");
+  }
+}
+
+async function vote(id){
+  if(votedIds.has(id)) return;
+  const m = materials.find(x=>x.id===id);
+  if(!m) return;
+  m.votes += 1;
+  votedIds.add(id);
+  renderGrid();
+  try{
+    await sb(`materials?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {'Prefer': 'return=minimal'},
+      body: JSON.stringify({votes: m.votes})
+    });
+  }catch(e){ console.error(e); }
+}
+
+function renderGrid(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const sort = document.getElementById('sortSelect').value;
+  let list = materials.filter(m=>{
+    if(activeType !== 'All' && m.type !== activeType) return false;
+    if(!q) return true;
+    const hay = (m.title+' '+m.course+' '+m.tags.join(' ')+' '+m.desc).toLowerCase();
+    return hay.includes(q);
+  });
+  if(sort==='top') list = [...list].sort((a,b)=>b.votes-a.votes);
+  else if(sort==='course') list = [...list].sort((a,b)=>a.course.localeCompare(b.course));
+  else list = [...list].sort((a,b)=>b.createdAt-a.createdAt);
+
+  const grid = document.getElementById('grid');
+  if(list.length===0){
+    grid.innerHTML = `<div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <h4>No charts logged here yet</h4>
+      <p>${materials.length===0 ? "Be the first to mark this archive on the map." : "Nothing matches that search — try another course or tag."}</p>
+    </div>`;
+  } else {
+    grid.innerHTML = list.map((m,i)=>`
+      <div class="card" style="animation-delay:${Math.min(i*0.04,0.4)}s">
+        <div class="card-top">
+          <span class="course-stamp">${esc(m.course)}</span>
+          <span class="type-badge">${esc(m.type)}</span>
+        </div>
+        <h3>${esc(m.title)}</h3>
+        ${m.desc ? `<p class="desc">${esc(m.desc)}</p>` : `<p class="desc" style="opacity:0.5;">No description added.</p>`}
+        ${m.tags.length ? `<div class="tag-row">${m.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div>` : ''}
+        <div class="card-foot">
+          <span class="uploader">Logged by <b>${esc(m.uploader)}</b></span>
+          <div class="card-actions">
+            <button class="vote-btn ${votedIds.has(m.id)?'voted':''}" onclick="vote('${m.id}')">▲ ${m.votes}</button>
+            <a class="open-link" href="${esc(m.link)}" target="_blank" rel="noopener noreferrer">Open ↗</a>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  updateStats();
+}
+
+function updateStats(){
+  document.getElementById('statTotal').textContent = materials.length;
+  document.getElementById('statCourses').textContent = new Set(materials.map(m=>m.course)).size;
+  document.getElementById('statVotes').textContent = materials.reduce((s,m)=>s+m.votes,0);
+}
+
+if(!SETUP_DONE){
+  document.getElementById('setupGate').classList.add('open');
+} else {
+  buildChips();
+  loadMaterials();
+}
+</script>
+</body>
+</html>
