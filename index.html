@@ -75,6 +75,11 @@
     border-radius:var(--radius); cursor:pointer; letter-spacing:0.01em;
     transition:background .15s, transform .15s;
     box-shadow:0 4px 14px rgba(181,72,42,0.3);
+    position:relative; overflow:hidden;
+  }
+  .btn-primary::before{
+    content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0) 55%);
   }
   .btn-primary:hover{background:var(--rust-bright); transform:translateY(-1px);}
   .btn-ghost{
@@ -83,6 +88,9 @@
     border-radius:var(--radius); cursor:pointer; transition:border-color .15s, color .15s;
   }
   .btn-ghost:hover{border-color:var(--gold); color:var(--gold-bright);}
+
+  .wave-divider{width:100%; line-height:0; margin-top:-1px;}
+  .wave-divider svg{width:100%; height:52px; display:block;}
 
   /* ---------- HERO ---------- */
   .hero{padding:76px 0 56px; text-align:center; position:relative;}
@@ -155,10 +163,16 @@
   .card{
     background:linear-gradient(180deg, rgba(239,230,205,0.05), rgba(239,230,205,0.02));
     border:1px solid var(--line); border-radius:6px; padding:20px;
-    display:flex; flex-direction:column; gap:12px; position:relative;
+    display:flex; flex-direction:column; gap:12px; position:relative; overflow:hidden;
     transition:transform .18s, border-color .18s, box-shadow .18s;
     opacity:0; animation:riseIn .5s ease forwards;
   }
+  .card::before{
+    content:''; position:absolute; top:0; left:-60%; width:50%; height:100%;
+    background:linear-gradient(115deg, transparent, rgba(255,255,255,0.06), transparent);
+    pointer-events:none; transition:left .6s ease;
+  }
+  .card:hover::before{left:120%;}
   .card:hover{transform:translateY(-3px); border-color:rgba(201,162,75,0.5); box-shadow:var(--shadow);}
   @keyframes riseIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
   .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
@@ -187,6 +201,11 @@
   }
   .vote-btn:hover{border-color:var(--gold); color:var(--gold-bright);}
   .vote-btn.voted{background:rgba(201,162,75,0.15); border-color:var(--gold); color:var(--gold-bright);}
+  .delete-btn{
+    background:transparent; border:1px solid var(--line); color:var(--text-low);
+    padding:6px 9px; border-radius:16px; cursor:pointer; font-size:12px; transition:all .15s;
+  }
+  .delete-btn:hover{border-color:var(--danger, #ff5c5c); color:#ff5c5c; background:rgba(255,92,92,0.08);}
   .open-link{
     color:var(--verdigris-dim); font-size:12px; font-weight:600; text-decoration:none;
     display:flex; align-items:center; gap:4px;
@@ -232,6 +251,54 @@
   .field-row{display:flex; gap:12px;}
   .field-row .field{flex:1;}
   .field-hint{font-size:11.5px; color:var(--text-low); margin-top:6px; line-height:1.4;}
+
+  .mode-toggle{display:flex; gap:6px;}
+  .mode-btn{
+    flex:1; background:rgba(239,230,205,0.04); border:1px solid var(--line); color:var(--text-mid);
+    padding:9px 8px; border-radius:var(--radius); font-family:'Public Sans',sans-serif; font-size:12.5px;
+    font-weight:600; cursor:pointer; transition:all .15s;
+  }
+  .mode-btn.active{background:var(--verdigris); border-color:var(--verdigris); color:var(--text-hi);}
+  .file-preview-list{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .file-preview{
+    width:56px; height:56px; border-radius:6px; overflow:hidden; position:relative;
+    background:rgba(255,255,255,0.05); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font-size:22px;
+  }
+  .file-preview img{width:100%; height:100%; object-fit:cover;}
+  .file-preview .remove-file{
+    position:absolute; top:1px; right:1px; width:16px; height:16px; border-radius:50%;
+    background:rgba(0,0,0,0.7); color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; border:none;
+  }
+  .card-gallery{display:flex; gap:6px; flex-wrap:wrap;}
+  .card-gallery a{
+    width:52px; height:52px; border-radius:6px; overflow:hidden; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.04); font-size:20px;
+  }
+  .card-gallery img{width:100%; height:100%; object-fit:cover;}
+  .card-typed-content{
+    font-size:13px; color:var(--text-mid); line-height:1.6; background:rgba(0,0,0,0.15);
+    border-radius:6px; padding:12px; max-height:110px; overflow-y:auto; white-space:pre-wrap;
+  }
+
+  .avatar-circle{
+    width:26px; height:26px; border-radius:50%; overflow:hidden; flex-shrink:0;
+    border:1px solid var(--line); background:var(--verdigris);
+    display:inline-flex; align-items:center; justify-content:center;
+    vertical-align:middle; margin-right:6px;
+  }
+  .avatar-circle svg{width:100%; height:100%;}
+  .avatar-circle.small{width:18px; height:18px;}
+  .parrot-picker{display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;}
+  .parrot-option{
+    background:rgba(239,230,205,0.04); border:1.5px solid var(--line); border-radius:10px;
+    padding:8px 4px 6px; cursor:pointer; transition:all .15s; text-align:center;
+  }
+  .parrot-option svg{width:100%; height:auto; max-width:44px;}
+  .parrot-option.selected{border-color:var(--gold); background:rgba(201,162,75,0.12); transform:translateY(-2px);}
+  .parrot-option:hover{border-color:var(--gold-bright);}
+
   .modal-actions{display:flex; gap:10px; margin-top:24px;}
   .modal-actions .btn-primary, .modal-actions .btn-ghost{flex:1;}
 
@@ -345,6 +412,23 @@
     </div>
   </section>
 
+  <div class="wave-divider">
+    <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,30 C150,60 350,0 600,25 C850,50 1050,5 1200,30 L1200,60 L0,60 Z" fill="url(#waveGrad1)" opacity="0.5"/>
+      <path d="M0,38 C200,10 400,55 650,32 C900,10 1050,45 1200,25 L1200,60 L0,60 Z" fill="url(#waveGrad2)"/>
+      <defs>
+        <linearGradient id="waveGrad1" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="var(--verdigris)"/>
+          <stop offset="100%" stop-color="var(--gold)"/>
+        </linearGradient>
+        <linearGradient id="waveGrad2" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="var(--gold)"/>
+          <stop offset="100%" stop-color="var(--verdigris)"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
   <section class="console" id="browse">
     <div class="section-label">The Archive</div>
     <div class="console-top">
@@ -402,13 +486,32 @@
         </div>
       </div>
       <div class="field">
-        <label>Description</label>
-        <textarea id="fDesc" placeholder="What's in it, which semester, anything to know before opening it…"></textarea>
+        <label>How are you sharing this?</label>
+        <div class="mode-toggle" id="modeToggle">
+          <button type="button" class="mode-btn active" data-mode="link" onclick="setUploadMode('link')">🔗 Link</button>
+          <button type="button" class="mode-btn" data-mode="file" onclick="setUploadMode('file')">📎 Upload</button>
+          <button type="button" class="mode-btn" data-mode="text" onclick="setUploadMode('text')">✍️ Type it</button>
+        </div>
+      </div>
+      <div class="field" id="linkModeField">
+        <label>Link to the file</label>
+        <input type="url" id="fLink" placeholder="Google Drive, Dropbox, etc.">
+        <div class="field-hint">Drop a shareable link (make sure it's set to "anyone with the link").</div>
+      </div>
+      <div class="field" id="fileModeField" style="display:none;">
+        <label>Photos or files <span style="color:var(--text-low); text-transform:none; font-weight:400;">(up to 4)</span></label>
+        <input type="file" id="fFiles" accept="image/*,.pdf" multiple onchange="handleFileSelect(event)">
+        <div class="field-hint">Photos are auto-compressed before upload. Max 4 files, ~8MB each.</div>
+        <div id="filePreviewList" class="file-preview-list"></div>
+      </div>
+      <div class="field" id="textModeField" style="display:none;">
+        <label>Content</label>
+        <textarea id="fContent" placeholder="Type it directly — a summary, key points, whatever's useful." style="min-height:200px;" maxlength="6000" oninput="document.getElementById('contentCounter').textContent = this.value.length + ' / 6000'"></textarea>
+        <div class="field-hint" id="contentCounter" style="text-align:right;">0 / 6000</div>
       </div>
       <div class="field">
-        <label>Link to the file</label>
-        <input type="url" id="fLink" placeholder="Google Drive, Dropbox, etc." required>
-        <div class="field-hint">FINDerr doesn't host files directly yet — drop a shareable link (make sure it's set to "anyone with the link").</div>
+        <label>Description</label>
+        <textarea id="fDesc" placeholder="What's in it, which semester, anything to know before opening it…"></textarea>
       </div>
       <div class="field">
         <label>Tags <span style="color:var(--text-low); text-transform:none; font-weight:400;">(comma-separated)</span></label>
@@ -417,7 +520,7 @@
       <p class="field-hint" style="margin-bottom:16px;">This'll be logged under your account name automatically.</p>
       <div class="modal-actions">
         <button type="button" class="btn-ghost" onclick="closeUpload()">Cancel</button>
-        <button type="submit" class="btn-primary">Log it</button>
+        <button type="submit" class="btn-primary" id="uploadSubmitBtn">Log it</button>
       </div>
     </form>
   </div>
@@ -473,6 +576,35 @@
       </div>
     </form>
     <p class="auth-switch" id="authSwitchText">New here? <a onclick="setAuthMode('signup')">Create an account</a></p>
+  </div>
+</div>
+
+<!-- Profile Edit Modal -->
+<div class="overlay" id="profileOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Your profile</h2>
+      <button class="close-x" onclick="closeProfileModal()">×</button>
+    </div>
+    <p class="modal-sub">This is how you show up across FINDerr.</p>
+    <form id="profileForm" onsubmit="handleProfileSubmit(event)">
+      <div class="field">
+        <label>Pick your parrot</label>
+        <div class="parrot-picker" id="parrotPicker"></div>
+      </div>
+      <div class="field">
+        <label>Display name</label>
+        <input type="text" id="profileName" required>
+      </div>
+      <div class="field">
+        <label>School</label>
+        <input type="text" id="profileSchool">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" onclick="closeProfileModal()">Cancel</button>
+        <button type="submit" class="btn-primary" id="profileSubmitBtn">Save</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -553,6 +685,44 @@ let activeType = "All";
 let materials = [];
 let votedIds = new Set();
 
+/* ---------- 7 parrot avatars (mood-based, no names) ---------- */
+const PARROT_HEAD = `<circle cx="32" cy="34" r="24" fill="var(--verdigris)"/>
+  <path d="M14 20 C18 10 28 6 36 10 C29 12 22 17 18 25 Z" fill="var(--rust)"/>`;
+const PARROT_FACES = {
+  happy:  `<path d="M48 30 C60 27 65 34 56 41 C51 37 48 33 48 30 Z" fill="var(--gold)"/>
+           <circle cx="28" cy="30" r="3.2" fill="#1a1310"/>
+           <circle cx="18" cy="38" r="2.5" fill="var(--gold)"/>`,
+  sleepy: `<path d="M46 32 C57 30 61 36 53 42 C49 38 47 35 46 32 Z" fill="var(--gold)"/>
+           <path d="M22 30 Q28 34 34 30" stroke="#1a1310" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+           <text x="44" y="14" font-size="9" fill="var(--rose)" font-family="monospace">z z</text>`,
+  grumpy: `<path d="M48 33 C58 32 61 37 54 41 C50 38 48 36 48 33 Z" fill="var(--gold)"/>
+           <path d="M22 26 L32 29" stroke="#1a1310" stroke-width="2.4" stroke-linecap="round"/>
+           <circle cx="28" cy="32" r="2.6" fill="#1a1310"/>
+           <path d="M14 24 L34 30" stroke="#1a1310" stroke-width="3.4" stroke-linecap="round"/>
+           <ellipse cx="27" cy="31" rx="6.5" ry="7" fill="#1a1310"/>`,
+  bashful:`<path d="M47 34 C57 33 60 38 53 42 C49 39 47 36 47 34 Z" fill="var(--gold)"/>
+           <circle cx="26" cy="32" r="2.6" fill="#1a1310"/>
+           <circle cx="16" cy="40" r="4" fill="var(--rust-bright)" opacity="0.55"/>
+           <circle cx="30" cy="44" r="4" fill="var(--rust-bright)" opacity="0.4"/>`,
+  sneezy: `<path d="M48 32 C60 30 63 36 55 42 C50 38 48 35 48 32 Z" fill="var(--gold)"/>
+           <path d="M24 28 L31 32 L24 34" stroke="#1a1310" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+           <path d="M58 26 L62 22 M60 30 L65 28 M58 34 L63 36" stroke="var(--gold-bright)" stroke-width="1.6" stroke-linecap="round"/>`,
+  wise:   `<path d="M47 32 C58 30 61 36 54 41 C50 37 47 34 47 32 Z" fill="var(--gold)"/>
+           <circle cx="27" cy="31" r="6" fill="none" stroke="var(--gold-bright)" stroke-width="1.6"/>
+           <circle cx="27" cy="31" r="2.4" fill="#1a1310"/>
+           <path d="M8 30 Q14 20 22 24" stroke="var(--rust-bright)" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+  goofy:  `<path d="M46 34 C58 34 60 40 52 43 C48 40 46 37 46 34 Z" fill="var(--gold)"/>
+           <circle cx="24" cy="30" r="2.4" fill="#1a1310"/>
+           <circle cx="31" cy="32" r="2.4" fill="#1a1310"/>
+           <ellipse cx="50" cy="42" rx="4" ry="2.4" fill="var(--rust-bright)"/>`
+};
+const PARROT_MOODS = ['happy','sleepy','grumpy','bashful','sneezy','wise','goofy'];
+
+function parrotAvatarSVG(mood){
+  const face = PARROT_FACES[mood] || PARROT_FACES.happy;
+  return `<svg viewBox="0 0 70 60" xmlns="http://www.w3.org/2000/svg">${PARROT_HEAD}${face}</svg>`;
+}
+
 function esc(s){
   const d = document.createElement('div');
   d.textContent = s == null ? '' : String(s);
@@ -568,10 +738,13 @@ function showToast(msg){
 
 function openUpload(){
   if(!currentUser){ openAuthModal(); return; }
+  setUploadMode('link', true);
+  selectedFiles = [];
+  document.getElementById('filePreviewList').innerHTML = '';
   document.getElementById('uploadOverlay').classList.add('open');
   playSfx('open');
 }
-function closeUpload(){ document.getElementById('uploadOverlay').classList.remove('open'); document.getElementById('uploadForm').reset(); playSfx('close'); }
+function closeUpload(){ document.getElementById('uploadOverlay').classList.remove('open'); document.getElementById('uploadForm').reset(); selectedFiles = []; playSfx('close'); }
 document.getElementById('uploadOverlay').addEventListener('click', e=>{ if(e.target.id==='uploadOverlay') closeUpload(); });
 document.getElementById('aboutModal').addEventListener('click', e=>{ if(e.target.id==='aboutModal') e.target.classList.remove('open'); });
 
@@ -592,8 +765,10 @@ async function loadMaterials(){
     materials = (data || []).map(r => ({
       id: r.id, title: r.title, course: r.course, type: r.type,
       desc: r.description || '', link: r.link,
+      contentText: r.content_text || '', fileUrls: r.file_urls || [],
       tags: (r.tags || '').split(',').map(t=>t.trim()).filter(Boolean),
-      uploader: r.uploader, school: r.school || 'Unspecified', votes: r.votes || 0, createdAt: r.created_at
+      uploader: r.uploader, school: r.school || 'Unspecified', userId: r.user_id || null,
+      avatarMood: r.avatar_mood || 'happy', votes: r.votes || 0, createdAt: r.created_at
     }));
   }catch(e){
     console.error('load error', e);
@@ -603,38 +778,135 @@ async function loadMaterials(){
   renderGrid();
 }
 
+/* ---------- upload mode toggle ---------- */
+let uploadMode = 'link';
+let selectedFiles = [];
+
+function setUploadMode(mode, silent){
+  uploadMode = mode;
+  if(!silent) playSfx('tab');
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  document.getElementById('linkModeField').style.display = mode === 'link' ? 'block' : 'none';
+  document.getElementById('fileModeField').style.display = mode === 'file' ? 'block' : 'none';
+  document.getElementById('textModeField').style.display = mode === 'text' ? 'block' : 'none';
+}
+
+function compressImage(file, maxDim=1280, quality=0.72){
+  return new Promise((resolve, reject) => {
+    if(!file.type.startsWith('image/')){ resolve(file); return; }
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = e => { img.src = e.target.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      let { width, height } = img;
+      if(width > maxDim || height > maxDim){
+        const scale = maxDim / Math.max(width, height);
+        width = Math.round(width*scale); height = Math.round(height*scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      canvas.toBlob(blob => {
+        resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), {type:'image/jpeg'}));
+      }, 'image/jpeg', quality);
+    };
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function handleFileSelect(e){
+  const files = Array.from(e.target.files).slice(0, 4);
+  const oversized = files.filter(f => f.size > 8*1024*1024);
+  if(oversized.length){
+    showToast('One or more files are over 8MB — try a smaller version');
+    playSfx('error');
+  }
+  selectedFiles = files.filter(f => f.size <= 8*1024*1024);
+  renderFilePreviews();
+}
+
+function renderFilePreviews(){
+  const wrap = document.getElementById('filePreviewList');
+  wrap.innerHTML = selectedFiles.map((f, i) => {
+    if(f.type.startsWith('image/')){
+      const url = URL.createObjectURL(f);
+      return `<div class="file-preview"><img src="${url}"><button type="button" class="remove-file" onclick="removeFile(${i})">×</button></div>`;
+    }
+    return `<div class="file-preview">📄<button type="button" class="remove-file" onclick="removeFile(${i})">×</button></div>`;
+  }).join('');
+}
+function removeFile(i){ selectedFiles.splice(i,1); renderFilePreviews(); }
+
+async function uploadFilesToStorage(files, userId, materialId){
+  const urls = [];
+  for(const rawFile of files){
+    const file = await compressImage(rawFile);
+    const path = `${userId}/${materialId}/${Date.now()}_${file.name}`;
+    const { error } = await sbClient.storage.from('materials-files').upload(path, file);
+    if(error) throw error;
+    const { data } = sbClient.storage.from('materials-files').getPublicUrl(path);
+    urls.push(data.publicUrl);
+  }
+  return urls;
+}
+
 async function handleSubmit(e){
   e.preventDefault();
   if(!currentUser){ closeUpload(); openAuthModal(); return; }
+
+  const link = document.getElementById('fLink').value.trim();
+  const contentText = document.getElementById('fContent').value.trim();
+  if(uploadMode === 'link' && !link){ showToast('Add a link, or switch mode'); return; }
+  if(uploadMode === 'text' && !contentText){ showToast("Type something, or switch mode"); return; }
+  if(uploadMode === 'file' && selectedFiles.length === 0){ showToast('Choose at least one file'); return; }
+
+  const submitBtn = document.getElementById('uploadSubmitBtn');
+  submitBtn.disabled = true; submitBtn.textContent = 'Logging…';
+
   const entry = {
     id: 'm_' + Date.now() + '_' + Math.random().toString(36).slice(2,8),
     title: document.getElementById('fTitle').value.trim(),
     course: document.getElementById('fCourse').value.trim().toUpperCase(),
     type: document.getElementById('fType').value,
     desc: document.getElementById('fDesc').value.trim(),
-    link: document.getElementById('fLink').value.trim(),
+    link: uploadMode === 'link' ? link : '',
+    contentText: uploadMode === 'text' ? contentText : '',
+    fileUrls: [],
     tags: document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean),
     uploader: currentUser.displayName,
     school: currentUser.school,
+    userId: currentUser.id,
+    avatarMood: currentUser.avatarMood,
     votes: 0,
     createdAt: Date.now()
   };
+
   try{
+    if(uploadMode === 'file'){
+      entry.fileUrls = await uploadFilesToStorage(selectedFiles, currentUser.id, entry.id);
+    }
     const { error } = await sbClient.from('materials').insert({
       id: entry.id, title: entry.title, course: entry.course, type: entry.type,
-      description: entry.desc, link: entry.link, tags: entry.tags.join(','),
-      uploader: entry.uploader, school: entry.school, votes: 0, created_at: entry.createdAt
+      description: entry.desc, link: entry.link, content_text: entry.contentText,
+      file_urls: entry.fileUrls, tags: entry.tags.join(','),
+      uploader: entry.uploader, school: entry.school, user_id: entry.userId, avatar_mood: entry.avatarMood,
+      votes: 0, created_at: entry.createdAt
     });
     if(error) throw error;
     materials.unshift(entry);
+    selectedFiles = [];
     closeUpload();
     renderGrid();
     showToast('Logged to the archive ⚓');
     playSfx('success');
   }catch(err){
     console.error(err);
-    showToast("Couldn't save — check your Supabase setup");
+    showToast("Couldn't save — " + (err.message || 'check your Supabase setup'));
     playSfx('error');
+  }finally{
+    submitBtn.disabled = false; submitBtn.textContent = 'Log it';
   }
 }
 
@@ -651,6 +923,24 @@ async function vote(id){
     const { error } = await sbClient.from('materials').update({votes: m.votes}).eq('id', id);
     if(error) throw error;
   }catch(e){ console.error(e); }
+}
+
+async function deleteMaterial(id){
+  const m = materials.find(x=>x.id===id);
+  if(!m || !currentUser || m.userId !== currentUser.id) return;
+  if(!confirm(`Remove "${m.title}" from the archive? This can't be undone.`)) return;
+  try{
+    const { error } = await sbClient.from('materials').delete().eq('id', id);
+    if(error) throw error;
+    materials = materials.filter(x => x.id !== id);
+    renderGrid();
+    showToast('Removed from the archive');
+    playSfx('close');
+  }catch(err){
+    console.error(err);
+    showToast("Couldn't delete — " + (err.message || 'try again'));
+    playSfx('error');
+  }
 }
 
 function renderGrid(){
@@ -685,11 +975,17 @@ function renderGrid(){
         <h3>${esc(m.title)}</h3>
         ${m.desc ? `<p class="desc">${esc(m.desc)}</p>` : `<p class="desc" style="opacity:0.5;">No description added.</p>`}
         ${m.tags.length ? `<div class="tag-row">${m.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div>` : ''}
+        ${m.contentText ? `<div class="card-typed-content">${esc(m.contentText)}</div>` : ''}
+        ${m.fileUrls && m.fileUrls.length ? `<div class="card-gallery">${m.fileUrls.map(u => u.match(/\.(jpe?g|png|webp|gif)$/i)
+            ? `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer"><img src="${esc(u)}"></a>`
+            : `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">📄</a>`
+          ).join('')}</div>` : ''}
         <div class="card-foot">
-          <span class="uploader">Logged by <b>${esc(m.uploader)}</b> · 🎓 ${esc(m.school)}</span>
+          <span class="uploader"><span class="avatar-circle small">${parrotAvatarSVG(m.avatarMood)}</span>Logged by <b>${esc(m.uploader)}</b> · 🎓 ${esc(m.school)}</span>
           <div class="card-actions">
             <button class="vote-btn ${votedIds.has(m.id)?'voted':''}" onclick="vote('${m.id}')">▲ ${m.votes}</button>
-            <a class="open-link" href="${esc(m.link)}" target="_blank" rel="noopener noreferrer">Open ↗</a>
+            ${m.link ? `<a class="open-link" href="${esc(m.link)}" target="_blank" rel="noopener noreferrer">Open ↗</a>` : ''}
+            ${currentUser && m.userId === currentUser.id ? `<button class="delete-btn" onclick="deleteMaterial('${m.id}')" title="Delete this entry">🗑</button>` : ''}
           </div>
         </div>
       </div>
@@ -719,7 +1015,8 @@ let authMode = 'login';
 function updateAuthUI(){
   const area = document.getElementById('authArea');
   if(currentUser){
-    area.innerHTML = `<span class="user-chip">⚓ ${esc(currentUser.displayName)}</span><button class="btn-ghost" onclick="logout()">Log out</button>`;
+    const avatarHtml = `<span class="avatar-circle">${parrotAvatarSVG(currentUser.avatarMood)}</span>`;
+    area.innerHTML = `<span class="user-chip" style="cursor:pointer;" onclick="openProfileModal()">${avatarHtml}${esc(currentUser.displayName)}</span><button class="btn-ghost" onclick="logout()">Log out</button>`;
   } else {
     area.innerHTML = `<button class="btn-ghost" onclick="openAuthModal()">Log in</button>`;
   }
@@ -732,7 +1029,8 @@ function setUserFromSession(session){
       id: session.user.id,
       email: session.user.email,
       displayName: meta.display_name || (session.user.email ? session.user.email.split('@')[0] : 'Anonymous'),
-      school: meta.school || 'Unspecified'
+      school: meta.school || 'Unspecified',
+      avatarMood: PARROT_MOODS.includes(meta.avatar_mood) ? meta.avatar_mood : 'happy'
     };
   } else {
     currentUser = null;
@@ -802,6 +1100,62 @@ async function logout(){
   await sbClient.auth.signOut();
   showToast('Logged out');
   playSfx('close');
+}
+
+/* ---------- PROFILE / AVATAR ---------- */
+let pendingAvatarMood = 'happy';
+
+function renderParrotPicker(){
+  const wrap = document.getElementById('parrotPicker');
+  wrap.innerHTML = PARROT_MOODS.map(mood => `
+    <div class="parrot-option ${mood===pendingAvatarMood?'selected':''}" data-mood="${mood}" onclick="selectParrotMood('${mood}')" title="${mood} parrot">
+      ${parrotAvatarSVG(mood)}
+    </div>
+  `).join('');
+}
+function selectParrotMood(mood){
+  pendingAvatarMood = mood;
+  playSfx('tab');
+  renderParrotPicker();
+}
+
+function openProfileModal(){
+  if(!currentUser) return;
+  pendingAvatarMood = currentUser.avatarMood || 'happy';
+  document.getElementById('profileName').value = currentUser.displayName;
+  document.getElementById('profileSchool').value = currentUser.school === 'Unspecified' ? '' : currentUser.school;
+  renderParrotPicker();
+  document.getElementById('profileOverlay').classList.add('open');
+  playSfx('open');
+}
+function closeProfileModal(){ document.getElementById('profileOverlay').classList.remove('open'); playSfx('close'); }
+document.getElementById('profileOverlay').addEventListener('click', e=>{ if(e.target.id==='profileOverlay') closeProfileModal(); });
+
+async function handleProfileSubmit(e){
+  e.preventDefault();
+  const submitBtn = document.getElementById('profileSubmitBtn');
+  submitBtn.disabled = true; submitBtn.textContent = 'Saving…';
+  try{
+    const displayName = document.getElementById('profileName').value.trim();
+    const school = document.getElementById('profileSchool').value.trim() || 'Unspecified';
+    const { error } = await sbClient.auth.updateUser({
+      data: { display_name: displayName, school: school, avatar_mood: pendingAvatarMood }
+    });
+    if(error) throw error;
+    currentUser.displayName = displayName;
+    currentUser.school = school;
+    currentUser.avatarMood = pendingAvatarMood;
+    updateAuthUI();
+    closeProfileModal();
+    showToast('Profile updated ⚓');
+    playSfx('success');
+  }catch(err){
+    console.error(err);
+    showToast(err.message || "Couldn't update profile");
+    playSfx('error');
+  }finally{
+    submitBtn.disabled = false; submitBtn.textContent = 'Save';
+  }
 }
 
 /* ---------- PARROT GUIDE ---------- */
